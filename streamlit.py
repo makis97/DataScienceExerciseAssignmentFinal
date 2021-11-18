@@ -28,34 +28,11 @@ def main():
         if csv_file_train is not None:
             try:
                 train = pd.read_csv(csv_file_train, low_memory=False)
-                st.write(train.head())
             except Exception as e:
                 print(e)
         csv_file_test = st.file_uploader("Upload Test File", type=["csv"])
-        if csv_file_test is not None:
-            try:
-                test = pd.read_csv(csv_file_test)
-                st.write(test.head())
-            except Exception as e:
-                print(e)
         csv_file_store = st.file_uploader("Upload Store File", type=["csv"])
-        if csv_file_store is not None:
-            try:
-                store = pd.read_csv(csv_file_store)
-                st.write(store.head())
-            except Exception as e:
-                print(e)
-    elif choice == "Data Exploration":
-        st.subheader("Data Exploration")
-
-    elif choice == "Models":
-        st.subheader("Models")
-
-    elif choice == "Conclusion":
-        st.subheader("Conclusion")
-
-
-
+        print('vasilis')
 
 
 if __name__ == '__main__':
