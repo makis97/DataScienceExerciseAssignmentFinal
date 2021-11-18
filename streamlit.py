@@ -17,12 +17,36 @@ import streamlit as st
 
 
 def main():
-    menu = ["Introduction", "CSV Files", "Data Exploration", "Models", "Conclusion"]
+    menu = ["CSV Files", "Introduction", "Data Exploration", "Models", "Conclusion"]
 
     choice = st.sidebar.selectbox("Menu", menu)
 
-    if choice == "Introduction":
+    if choice == "CSV Files":
         st.write("""# Data Science Assignment""")
+        st.subheader("CSV Files")
+        csv_file_train = st.file_uploader("Upload Train File")
+        if csv_file_train is not None:
+            try:
+                train = pd.read_csv(csv_file_train, low_memory=False)
+                st.write(train.head())
+            except Exception as e:
+                print(e)
+        csv_file_test = st.file_uploader("Upload Test File", type=["csv"])
+        if csv_file_test is not None:
+            try:
+                test = pd.read_csv(csv_file_test)
+                st.write(test.head())
+            except Exception as e:
+                print(e)
+        csv_file_store = st.file_uploader("Upload Store File", type=["csv"])
+        if csv_file_store is not None:
+            try:
+                store = pd.read_csv(csv_file_store)
+                st.write(store.head())
+            except Exception as e:
+                print(e)
+    elif choice == "Introduction":
+        st.write("""# Introduction""")
         st.subheader("Files")
         st.write("""
         train.csv - historical data including Sales
@@ -62,35 +86,14 @@ def main():
                 
                 PromoInterval - describes the consecutive intervals Promo2 is started, naming the months the promotion is started anew. E.g. "Feb,May,Aug,Nov" means each round starts in February, May, August, November of any given year for that stor
 """)
-    elif choice == "CSV Files":
-        st.subheader("CSV Files")
-        csv_file_train = st.file_uploader("Upload Train File")
-        if csv_file_train is not None:
-            try:
-                train = pd.read_csv(csv_file_train, low_memory=False)
-                st.write(train.head())
-            except Exception as e:
-                print(e)
-        csv_file_test = st.file_uploader("Upload Test File", type=["csv"])
-        if csv_file_test is not None:
-            try:
-                test = pd.read_csv(csv_file_test)
-                st.write(test.head())
-            except Exception as e:
-                print(e)
-        csv_file_store = st.file_uploader("Upload Store File", type=["csv"])
-        if csv_file_store is not None:
-            try:
-                store = pd.read_csv(csv_file_store)
-                st.write(store.head())
-            except Exception as e:
-                print(e)
+
     elif choice == "Data Exploration":
-        st.subheader("Data Exploration")
+        st.write("""# Data Exploration""")
+
     elif choice == "Models":
-        st.subheader("Models")
+        st.write("""# Models""")
     elif choice == "Conclusion":
-        st.subheader("Conclusion")
+        st.write("""# Conclusion""")
 
 
 if __name__ == '__main__':
