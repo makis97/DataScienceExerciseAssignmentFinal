@@ -305,7 +305,6 @@ print(sales.head())
 ax = sales.set_index('Date').plot(figsize = (12, 4), color = 'c')
 ax.set_ylabel('Daily Number of Sales')
 ax.set_xlabel('Date')
-plt.show()
 
 test_m['Date'] = test['Date']
 print(test_m)
