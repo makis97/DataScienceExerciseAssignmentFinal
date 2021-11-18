@@ -32,6 +32,7 @@ def main():
                 print(e)
         csv_file_test = st.file_uploader("Upload Test File", type=["csv"])
         csv_file_store = st.file_uploader("Upload Store File", type=["csv"])
+        print('vasilis')
 
 
 if __name__ == '__main__':
