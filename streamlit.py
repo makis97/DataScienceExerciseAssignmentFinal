@@ -158,37 +158,76 @@ train_store.dropna()""")
         st.write(train_store.head())
 
         st.write("""##### Plot about Sales Per Store based on Store Type each Month. """)
-        p = sns.catplot(data=train_store, x='Month', y="Sales",
+        st.code("""gr_sales_per_mon = sns.catplot(data=train_store, x='Month', y="Sales",
+col='StoreType',  # per store type in cols
+palette='plasma',
+hue='StoreType',
+kind='bar',
+row='Promo')
+st.pyplot(gr_sales_per_mon)""")
+        gr_sales_per_mon = sns.catplot(data=train_store, x='Month', y="Sales",
                     col='StoreType',  # per store type in cols
                     palette='plasma',
                     hue='StoreType',
                     kind='bar',
                     row='Promo')
-        st.write(p)
+        st.pyplot(gr_sales_per_mon)
 
-        # sns.catplot(data=train_store, x='Month', y="Customers",
-        #             col='StoreType',  # per store type in cols
-        #             palette='plasma',
-        #             hue='StoreType',
-        #             kind='bar',
-        #             row='Promo')
-        #
+        st.write("""##### Plot about Customers Per Store for each Month. """)
+        st.code("""gr_cust_per_month = sns.catplot(data=train_store, x='Month', y="Customers",
+col='StoreType',  # per store type in cols
+palette='plasma',
+hue='StoreType',
+kind='bar',
+row='Promo')
+st.pyplot(gr_cust_per_month)""")
+        gr_cust_per_month = sns.catplot(data=train_store, x='Month', y="Customers",
+                    col='StoreType',  # per store type in cols
+                    palette='plasma',
+                    hue='StoreType',
+                    kind='bar',
+                    row='Promo')
+        st.pyplot(gr_cust_per_month)
+
         # # StoreType pie
-        # store_types = store['StoreType'].value_counts().sort_values(ascending=False)
-        # ax = store_types.plot.pie(autopct="%.1f%%", startangle=90, figsize=(10, 10))
-        # ax.set_title('StoreType pie chart')
-        #
+        st.write("""##### Pie Chart about Sales Percentages Per Store Type""")
+        st.code("""store_types = store['StoreType'].value_counts().sort_values(ascending=False)
+pie_store_type_sales, ax = plt.subplots()
+ax.pie(store_types, autopct="%.1f%%", startangle=90)
+ax.set_title('StoreType pie chart')
+st.pyplot(pie_store_type_sales)""")
+        store_types = store['StoreType'].value_counts().sort_values(ascending=False)
+        pie_store_type_sales, ax = plt.subplots()
+        # To Do - labels
+        # stores_label = list(store['StoreType'])
+        ax.pie(store_types, autopct="%.1f%%", startangle=90)
+        ax.set_title('StoreType pie chart')
+        st.pyplot(pie_store_type_sales)
+
         # # DayOfWeek vs Sales
+        st.write("""##### Sales Per Day""")
+        st.code("""""")
+        gr_sales_per_day = sns.catplot(data=train, x='DayOfWeek', y="Sales",
+                                        col='Sales',  # per store type in cols
+                                        palette='plasma',
+                                        hue='Sales',
+                                        kind='bar',
+                                        row='Promo')
+        st.pyplot(gr_sales_per_day)
+
+        # Vasili Fix it
         # fig, ax = plt.subplots(figsize=(15, 10))
         # sns.barplot(x="DayOfWeek", y="Sales", data=train)
         #
         # cat_cols = train_store.select_dtypes(include=['object']).columns
         #
         # for i in cat_cols:
-        #     print(i)
-        #     print(train_store[i].value_counts())
-        #     print('-' * 20)
+        #     st.write(i)
+        #     st.write(train_store[i].value_counts())
+        #     st.write('-' * 20)
         #
+        # st.pyplot(fig)
+
         # train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
         # train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
         # train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
