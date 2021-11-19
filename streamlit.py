@@ -63,78 +63,109 @@ def main():
     elif choice == "Data Exploration":
         st.write("""# Data Exploration""")
 
-        st.write("Our Imports: ")
+        st.write("##### Imports ")
         st.code("""import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import r2_score , mean_squared_error
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import RandomizedSearchCV
-import matplotlib.pyplot as plt
 from sklearn.ensemble import AdaBoostRegressor
-import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor
+import xgboost as xgb
 import streamlit as st""")
 
         train = pd.read_csv("train.csv", low_memory=False)
-        st.write("Train: ", train.head())
+        st.write("##### Reading Train CSV File: ", train.head())
         st.code("train = pd.read_csv('train.csv', low_memory=False)")
 
         store = pd.read_csv("store.csv")
-        st.write("Store: ", store.head())
+        st.write("##### Reading Store CSV File: ", store.head())
         st.code("store = pd.read_csv('store.csv')")
 
         test = pd.read_csv("test.csv")
-        st.write("Test: ", test.head())
+        st.write("##### Reading Test CSV File: ", test.head())
         st.code("test = pd.read_csv('test.csv')")
 
-        # train['Date'] = pd.to_datetime(train['Date'])
-        # train['Year'] = train['Date'].dt.year
-        # train['Month'] = train['Date'].dt.month
-        # train['Day'] = train['Date'].dt.day
-        # # train['WeekOfYear'] = train['Date'].dt.isocalendar().week
-        #
-        # train['SalesPerCustomers'] = train['Sales'] / train['Customers']
-        #
-        # print(train['SalesPerCustomers'].describe())
-        # print(store.isnull().sum())
-        # # check if we have negative Sales
-        # sales_minus = train[(train["Sales"] < 0)]
-        # print(sales_minus)
-        #
-        # train = train[(train["Open"] != 0) & (train['Sales'] != 0)]
-        #
-        # store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
-        # store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
-        # store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
-        #
-        # store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
-        # store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
-        # store['CompetitionOpenSinceMonth'].mode().iloc[0])
-        # store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
-        # store['CompetitionOpenSinceYear'].mode().iloc[0])
-        #
-        # train.isnull().sum()
-        # train.dropna()
-        # train.isnull().sum()
-        # train.dropna()
-        # test.isnull().sum()
-        # pd.isna(store)
-        # store.dropna()
-        #
-        # train_store = train.merge(store, on='Store', how='left')
-        #
-        # train_store.dropna()
-        #
-        # sns.catplot(data=train_store, x='Month', y="Sales",
-        #             col='StoreType',  # per store type in cols
-        #             palette='plasma',
-        #             hue='StoreType',
-        #             kind='bar',
-        #             row='Promo')
-        #
+        st.write("##### Reading and Splitting Date into Year, Month, Day Columns in Train CSV File. ")
+        st.code("""train['Date'] = pd.to_datetime(train['Date'])
+train['Year'] = train['Date'].dt.year
+train['Month'] = train['Date'].dt.month
+train['Day'] = train['Date'].dt.day""")
+        train['Date'] = pd.to_datetime(train['Date'])
+        train['Year'] = train['Date'].dt.year
+        train['Month'] = train['Date'].dt.month
+        train['Day'] = train['Date'].dt.day
+        st.write("Result after splitting Date: ", train.head())
+
+        st.write("##### Calculate the average of Sales Per Customers in Train CSV File. On average customers spend about 9.50$ per day.")
+        train['SalesPerCustomers'] = train['Sales'] / train['Customers']
+        st.write("Average of Sales Per Customers: ", train['SalesPerCustomers'].describe())
+
+        st.write("""##### Check possibility of negative Sales in Train CSV File. As a result there are not negative Sales.""")
+        st.code("""sales_minus = train[(train["Sales"] < 0)]""")
+        sales_minus = train[(train["Sales"] < 0)]
+        st.write("Sales Minus: ", sales_minus)
+
+        st.write("""##### Closed stores and days which didn't have any sales won't be counted in Train CSV File.""")
+        st.code("""train = train[(train["Open"] != 0) & (train['Sales'] != 0)]""")
+
+        st.write("""##### Are there any missing values in Store CSV File?""")
+        st.code("""store.isnull().sum()""")
+        st.write("Missing Values: ", store.isnull().sum())
+
+        st.write("""##### Filling Missing Values in Store CSV File.""")
+        st.code("""store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
+store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
+store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
+store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
+store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
+store['CompetitionOpenSinceMonth'].mode().iloc[0])
+store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
+store['CompetitionOpenSinceYear'].mode().iloc[0])
+train.isnull().sum()
+train.dropna()
+train.isnull().sum()
+train.dropna()
+test.isnull().sum()
+pd.isna(store)
+store.dropna()""")
+        store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
+        store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
+        store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
+        store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
+        store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
+        store['CompetitionOpenSinceMonth'].mode().iloc[0])
+        store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
+        store['CompetitionOpenSinceYear'].mode().iloc[0])
+
+        train.isnull().sum()
+        train.dropna()
+        train.isnull().sum()
+        train.dropna()
+        test.isnull().sum()
+        pd.isna(store)
+        store.dropna()
+        st.write("Filling Missing Values: ", store.head())
+
+        st.write("""##### Merging Train and Store CSV Files based on Store CSV File.Also filling Nan Values.""")
+        st.code("""train_store = train.merge(store, on='Store', how='left')
+train_store.dropna()""")
+        train_store = train.merge(store, on='Store', how='left')
+        train_store.dropna()
+        st.write(train_store.head())
+
+        st.write("""##### Plot about Sales Per Store based on Store Type each Month. """)
+        p = sns.catplot(data=train_store, x='Month', y="Sales",
+                    col='StoreType',  # per store type in cols
+                    palette='plasma',
+                    hue='StoreType',
+                    kind='bar',
+                    row='Promo')
+        st.write(p)
+
         # sns.catplot(data=train_store, x='Month', y="Customers",
         #             col='StoreType',  # per store type in cols
         #             palette='plasma',
