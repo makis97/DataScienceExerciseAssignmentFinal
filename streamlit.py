@@ -1,32 +1,24 @@
-import matplotlib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import matplotlib.gridspec as gridspec
-from IPython.display import display
-from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import make_scorer
-# reading data
-import seaborn
+from sklearn.metrics import r2_score , mean_squared_error
+from sklearn.model_selection import RandomizedSearchCV
+import matplotlib.pyplot as plt
 from sklearn.ensemble import AdaBoostRegressor
+import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
 import streamlit as st
 
 
 def main():
-    train_flag = 0
-    test_flag = 0
-    store_flag = 0
-    menu = ["CSV Files", "Introduction", "Data Exploration", "Models", "Conclusion"]
+    menu = ["Introduction", "Data Exploration", "Models", "Conclusion"]
     choice = st.sidebar.selectbox("Menu", menu)
 
-    if choice == "CSV Files":
+    if choice == "Introduction":
         st.write("""# Data Science Assignment""")
-
-    elif choice == "Introduction":
         st.write("""# Introduction""")
         st.subheader("Files")
         st.write("""
@@ -66,86 +58,116 @@ def main():
                 Promo2Since[Year/Week] - describes the year and calendar week when the store started participating in Promo2
                 
                 PromoInterval - describes the consecutive intervals Promo2 is started, naming the months the promotion is started anew. E.g. "Feb,May,Aug,Nov" means each round starts in February, May, August, November of any given year for that stor
-""")
+    """)
 
     elif choice == "Data Exploration":
         st.write("""# Data Exploration""")
-        st.sidebar.subheader("CSV Files")
-        csv_file_train = st.sidebar.file_uploader("Upload Train File")
-        if csv_file_train is not None:
-            try:
-                train = pd.read_csv(csv_file_train, low_memory=False)
-                st.text("Train File")
-                st.write(train.head())
-                train_flag = 1
-            except Exception as e:
-                print(e)
-        csv_file_test = st.sidebar.file_uploader("Upload Test File", type=["csv"])
-        if csv_file_test is not None:
-            try:
-                test = pd.read_csv(csv_file_test)
-                st.text("Test File")
-                st.write(test.head())
-                test_flag = 1
-            except Exception as e:
-                print(e)
-        csv_file_store = st.sidebar.file_uploader("Upload Store File", type=["csv"])
-        if csv_file_store is not None:
-            try:
-                store = pd.read_csv(csv_file_store)
-                st.text("Store File")
-                st.write(store.head())
-                store_flag = 1
-            except Exception as e:
-                print(e)
 
-        if (train_flag == 1 or test_flag == 1 or store_flag == 1):
-            store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
-            store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
-            store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
+        st.write("Our Imports: ")
+        st.code("""import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import r2_score , mean_squared_error
+from sklearn.model_selection import RandomizedSearchCV
+import matplotlib.pyplot as plt
+from sklearn.ensemble import AdaBoostRegressor
+import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
+import streamlit as st""")
 
-            store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
-            store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
-                store['CompetitionOpenSinceMonth'].mode().iloc[0])
-            store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
-                store['CompetitionOpenSinceYear'].mode().iloc[0])
+        train = pd.read_csv("train.csv", low_memory=False)
+        st.write("Train: ", train.head())
+        st.code("train = pd.read_csv('train.csv', low_memory=False)")
 
-            train['Date'] = pd.to_datetime(train['Date'])
+        store = pd.read_csv("store.csv")
+        st.write("Store: ", store.head())
+        st.code("store = pd.read_csv('store.csv')")
 
-            train['Year'] = train['Date'].dt.year
-            train['Month'] = train['Date'].dt.month
-            train['Day'] = train['Date'].dt.day
-            # train['WeekOfYear'] = train['Date'].dt.isocalendar().week
+        test = pd.read_csv("test.csv")
+        st.write("Test: ", test.head())
+        st.code("test = pd.read_csv('test.csv')")
 
-            train['SalesPerCustomers'] = train['Sales'] / train['Customers']
-
-            print(train['SalesPerCustomers'].describe())
-            print(store.isnull().sum())
-            # check if we have negative Sales
-            sales_minus = train[(train["Sales"] < 0)]
-            print(sales_minus)
-
-            train = train[(train["Open"] != 0) & (train['Sales'] != 0)]
-
-            train.isnull().sum()
-            train.dropna()
-            train.isnull().sum()
-            train.dropna()
-            test.isnull().sum()
-            pd.isna(store)
-            store.dropna()
-
-            train_store = train.merge(store, on='Store', how='left')
-
-            train_store.dropna()
-
-            sns.catplot(data=train_store, x='Month', y="Sales",
-                        col='StoreType',  # per store type in cols
-                        palette='plasma',
-                        hue='StoreType',
-                        kind='bar',
-                        row='Promo')
-
+        # train['Date'] = pd.to_datetime(train['Date'])
+        # train['Year'] = train['Date'].dt.year
+        # train['Month'] = train['Date'].dt.month
+        # train['Day'] = train['Date'].dt.day
+        # # train['WeekOfYear'] = train['Date'].dt.isocalendar().week
+        #
+        # train['SalesPerCustomers'] = train['Sales'] / train['Customers']
+        #
+        # print(train['SalesPerCustomers'].describe())
+        # print(store.isnull().sum())
+        # # check if we have negative Sales
+        # sales_minus = train[(train["Sales"] < 0)]
+        # print(sales_minus)
+        #
+        # train = train[(train["Open"] != 0) & (train['Sales'] != 0)]
+        #
+        # store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
+        # store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
+        # store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
+        #
+        # store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
+        # store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
+        # store['CompetitionOpenSinceMonth'].mode().iloc[0])
+        # store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
+        # store['CompetitionOpenSinceYear'].mode().iloc[0])
+        #
+        # train.isnull().sum()
+        # train.dropna()
+        # train.isnull().sum()
+        # train.dropna()
+        # test.isnull().sum()
+        # pd.isna(store)
+        # store.dropna()
+        #
+        # train_store = train.merge(store, on='Store', how='left')
+        #
+        # train_store.dropna()
+        #
+        # sns.catplot(data=train_store, x='Month', y="Sales",
+        #             col='StoreType',  # per store type in cols
+        #             palette='plasma',
+        #             hue='StoreType',
+        #             kind='bar',
+        #             row='Promo')
+        #
+        # sns.catplot(data=train_store, x='Month', y="Customers",
+        #             col='StoreType',  # per store type in cols
+        #             palette='plasma',
+        #             hue='StoreType',
+        #             kind='bar',
+        #             row='Promo')
+        #
+        # # StoreType pie
+        # store_types = store['StoreType'].value_counts().sort_values(ascending=False)
+        # ax = store_types.plot.pie(autopct="%.1f%%", startangle=90, figsize=(10, 10))
+        # ax.set_title('StoreType pie chart')
+        #
+        # # DayOfWeek vs Sales
+        # fig, ax = plt.subplots(figsize=(15, 10))
+        # sns.barplot(x="DayOfWeek", y="Sales", data=train)
+        #
+        # cat_cols = train_store.select_dtypes(include=['object']).columns
+        #
+        # for i in cat_cols:
+        #     print(i)
+        #     print(train_store[i].value_counts())
+        #     print('-' * 20)
+        #
+        # train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
+        # train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
+        # train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
+        # train_store['StoreType'] = train_store['StoreType'].astype(int)
+        # train_store['Assortment'] = train_store['Assortment'].map({'a': 1, 'b': 2, 'c': 3})
+        # train_store['Assortment'] = train_store['Assortment'].astype(int)
+        # train_store['PromoInterval'] = train_store['PromoInterval'].map({'Jan,Apr,Jul,Oct': 1, 'Feb,May,Aug,Nov': 2, 'Mar,Jun,Sept,Dec': 3})
+        # train_store['PromoInterval'] = train_store['PromoInterval'].astype(int)
+        #
+        # train_store.dtypes
 
 
 
