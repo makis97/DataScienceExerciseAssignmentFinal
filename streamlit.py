@@ -17,34 +17,15 @@ import streamlit as st
 
 
 def main():
+    train_flag = 0
+    test_flag = 0
+    store_flag = 0
     menu = ["CSV Files", "Introduction", "Data Exploration", "Models", "Conclusion"]
-
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "CSV Files":
         st.write("""# Data Science Assignment""")
-        st.subheader("CSV Files")
-        csv_file_train = st.file_uploader("Upload Train File")
-        if csv_file_train is not None:
-            try:
-                train = pd.read_csv(csv_file_train, low_memory=False)
-                st.write(train.head())
-            except Exception as e:
-                print(e)
-        csv_file_test = st.file_uploader("Upload Test File", type=["csv"])
-        if csv_file_test is not None:
-            try:
-                test = pd.read_csv(csv_file_test)
-                st.write(test.head())
-            except Exception as e:
-                print(e)
-        csv_file_store = st.file_uploader("Upload Store File", type=["csv"])
-        if csv_file_store is not None:
-            try:
-                store = pd.read_csv(csv_file_store)
-                st.write(store.head())
-            except Exception as e:
-                print(e)
+
     elif choice == "Introduction":
         st.write("""# Introduction""")
         st.subheader("Files")
@@ -89,6 +70,84 @@ def main():
 
     elif choice == "Data Exploration":
         st.write("""# Data Exploration""")
+        st.sidebar.subheader("CSV Files")
+        csv_file_train = st.sidebar.file_uploader("Upload Train File")
+        if csv_file_train is not None:
+            try:
+                train = pd.read_csv(csv_file_train, low_memory=False)
+                st.text("Train File")
+                st.write(train.head())
+                train_flag = 1
+            except Exception as e:
+                print(e)
+        csv_file_test = st.sidebar.file_uploader("Upload Test File", type=["csv"])
+        if csv_file_test is not None:
+            try:
+                test = pd.read_csv(csv_file_test)
+                st.text("Test File")
+                st.write(test.head())
+                test_flag = 1
+            except Exception as e:
+                print(e)
+        csv_file_store = st.sidebar.file_uploader("Upload Store File", type=["csv"])
+        if csv_file_store is not None:
+            try:
+                store = pd.read_csv(csv_file_store)
+                st.text("Store File")
+                st.write(store.head())
+                store_flag = 1
+            except Exception as e:
+                print(e)
+
+        if (train_flag == 1 or test_flag == 1 or store_flag == 1):
+            store['Promo2SinceWeek'] = store['Promo2SinceWeek'].fillna(0)
+            store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
+            store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
+
+            store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
+            store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
+                store['CompetitionOpenSinceMonth'].mode().iloc[0])
+            store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
+                store['CompetitionOpenSinceYear'].mode().iloc[0])
+
+            train['Date'] = pd.to_datetime(train['Date'])
+
+            train['Year'] = train['Date'].dt.year
+            train['Month'] = train['Date'].dt.month
+            train['Day'] = train['Date'].dt.day
+            # train['WeekOfYear'] = train['Date'].dt.isocalendar().week
+
+            train['SalesPerCustomers'] = train['Sales'] / train['Customers']
+
+            print(train['SalesPerCustomers'].describe())
+            print(store.isnull().sum())
+            # check if we have negative Sales
+            sales_minus = train[(train["Sales"] < 0)]
+            print(sales_minus)
+
+            train = train[(train["Open"] != 0) & (train['Sales'] != 0)]
+
+            train.isnull().sum()
+            train.dropna()
+            train.isnull().sum()
+            train.dropna()
+            test.isnull().sum()
+            pd.isna(store)
+            store.dropna()
+
+            train_store = train.merge(store, on='Store', how='left')
+
+            train_store.dropna()
+
+            sns.catplot(data=train_store, x='Month', y="Sales",
+                        col='StoreType',  # per store type in cols
+                        palette='plasma',
+                        hue='StoreType',
+                        kind='bar',
+                        row='Promo')
+
+
+
 
     elif choice == "Models":
         st.write("""# Models""")
