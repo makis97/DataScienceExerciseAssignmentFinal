@@ -11,13 +11,15 @@ from sklearn.ensemble import AdaBoostRegressor
 import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor
 import streamlit as st
-
+from run_models import predict
 
 def main():
+
     menu = ["Introduction", "Data Exploration", "Models", "Conclusion"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Introduction":
+        x = 2
         st.write("""# Data Science Assignment""")
         st.write("""# Introduction""")
         st.subheader("Files")
@@ -62,7 +64,6 @@ def main():
 
     elif choice == "Data Exploration":
         st.write("""# Data Exploration""")
-
         st.write("##### Imports ")
         st.code("""import pandas as pd
 import numpy as np
@@ -121,10 +122,8 @@ train['Day'] = train['Date'].dt.day""")
 store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
 store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
 store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
-store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
-store['CompetitionOpenSinceMonth'].mode().iloc[0])
-store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
-store['CompetitionOpenSinceYear'].mode().iloc[0])
+store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(store['CompetitionOpenSinceMonth'].mode().iloc[0])
+store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(store['CompetitionOpenSinceYear'].mode().iloc[0])
 train.isnull().sum()
 train.dropna()
 train.isnull().sum()
@@ -136,10 +135,8 @@ store.dropna()""")
         store['Promo2SinceYear'] = store['Promo2SinceYear'].fillna(store['Promo2SinceYear'].mode().iloc[0])
         store['PromoInterval'] = store['PromoInterval'].fillna(store['PromoInterval'].mode().iloc[0])
         store['CompetitionDistance'] = store['CompetitionDistance'].fillna(store['CompetitionDistance'].max())
-        store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(
-        store['CompetitionOpenSinceMonth'].mode().iloc[0])
-        store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(
-        store['CompetitionOpenSinceYear'].mode().iloc[0])
+        store['CompetitionOpenSinceMonth'] = store['CompetitionOpenSinceMonth'].fillna(store['CompetitionOpenSinceMonth'].mode().iloc[0])
+        store['CompetitionOpenSinceYear'] = store['CompetitionOpenSinceYear'].fillna(store['CompetitionOpenSinceYear'].mode().iloc[0])
 
         train.isnull().sum()
         train.dropna()
@@ -227,7 +224,7 @@ st.pyplot(pie_store_type_sales)""")
         #     st.write('-' * 20)
         #
         # st.pyplot(fig)
-
+        #
         # train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
         # train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
         # train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
@@ -239,13 +236,44 @@ st.pyplot(pie_store_type_sales)""")
         #
         # train_store.dtypes
 
-
-
     elif choice == "Models":
         st.write("""# Models""")
+        st.code("""X = train_store.drop(['Sales','Date','Customers','SalesPerCustomers'],1)
+y = np.log(train_store['Sales']+1)
+from sklearn.model_selection import train_test_split
+X_train , X_val , y_train , y_val = train_test_split(X , y , test_size=0.20 , random_state = 1 )""")
+
+        st.write("""# Choose Algorithm""")
+        st.write("""Decision Tree Regressor
+        Decision tree is one of the well known and powerful supervised machine learning algorithms that can be used for classification and regression problems. Scikit-learn API provides the DecisionTreeRegressor class to apply decision tree method for regression task.""")
+        st.code("""dt = DecisionTreeRegressor(max_depth=11)
+dt.fit(X_train , y_train)
+y_pred_dt = dt.predict(X_val)
+
+y_pred_dt = np.exp(y_pred_dt)-1
+y_val = np.exp(y_val)-1""")
+        if st.button("run Decision Tree Regressor"):
+            model = 1
+            # print(predict(model))
+            st.write("Sale Prediction for this model:")
+            st.write(predict(model))
+        st.write("""An AdaBoost regressor. An AdaBoost regressor is a meta-estimator that begins by fitting a regressor on the original dataset and then fits additional 
+        copies of the regressor on the same dataset but where the weights of instances are adjusted according to the error of the current prediction.""")
+        st.code("""daboost_tree = AdaBoostRegressor(DecisionTreeRegressor())
+adaboost_tree.fit(X_train, y_train)
+y_hat = adaboost_tree.predict(X_val)
+
+test_pred_inv = adaboost_tree.predict(test_m[X_train.columns])
+
+test_pred_inv = np.exp(test_pred_inv) - 1""")
+        if st.button("run AdaBoost regressor"):
+            model = 2
+            print(predict(model))
+
     elif choice == "Conclusion":
         st.write("""# Conclusion""")
 
 
 if __name__ == '__main__':
     main()
+
