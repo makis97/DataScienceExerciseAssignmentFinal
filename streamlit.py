@@ -103,6 +103,7 @@ train['Day'] = train['Date'].dt.day""")
 
         st.write("##### Calculate the average of Sales Per Customers in Train CSV File. On average customers spend about 9.50$ per day.")
         train['SalesPerCustomers'] = train['Sales'] / train['Customers']
+        st.code("train['SalesPerCustomers'].describe()")
         st.write("Average of Sales Per Customers: ", train['SalesPerCustomers'].describe())
 
         st.write("""##### Check possibility of negative Sales in Train CSV File. As a result there are not negative Sales.""")
@@ -279,7 +280,7 @@ test_pred_inv = adaboost_tree.predict(test_m[X_train.columns])
 test_pred_inv = np.exp(test_pred_inv) - 1""")
         if st.button("run AdaBoost regressor"):
             model = 2
-            print(predict(model))
+            st.write(predict(model))
 
     elif choice == "Conclusion":
         st.write("""# Conclusion""")
