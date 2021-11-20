@@ -190,51 +190,62 @@ st.pyplot(gr_cust_per_month)""")
         st.write("""##### Pie Chart about Sales Percentages Per Store Type""")
         st.code("""store_types = store['StoreType'].value_counts().sort_values(ascending=False)
 pie_store_type_sales, ax = plt.subplots()
-ax.pie(store_types, autopct="%.1f%%", startangle=90)
+st.write(store_types)
+ax.pie(store_types, autopct="%.1f%%", startangle=90, labels = store_types.keys())
 ax.set_title('StoreType pie chart')
 st.pyplot(pie_store_type_sales)""")
         store_types = store['StoreType'].value_counts().sort_values(ascending=False)
         pie_store_type_sales, ax = plt.subplots()
-        # To Do - labels
-        # stores_label = list(store['StoreType'])
-        ax.pie(store_types, autopct="%.1f%%", startangle=90)
+        st.write(store_types)
+        ax.pie(store_types, autopct="%.1f%%", startangle=90, labels = store_types.keys())
         ax.set_title('StoreType pie chart')
         st.pyplot(pie_store_type_sales)
 
         # # DayOfWeek vs Sales
         st.write("""##### Sales Per Day""")
-        st.code("""""")
-        gr_sales_per_day = sns.catplot(data=train, x='DayOfWeek', y="Sales",
-                                        col='Sales',  # per store type in cols
-                                        palette='plasma',
-                                        hue='Sales',
-                                        kind='bar',
-                                        row='Promo')
-        st.pyplot(gr_sales_per_day)
+        st.code("""fig, ax = plt.subplots(figsize=(15, 10))
+sns.barplot(x="DayOfWeek", y="Sales", data=train)
+st.pyplot(fig))""")
+        fig, ax = plt.subplots(figsize=(15, 10))
+        sns.barplot(x="DayOfWeek", y="Sales", data=train)
+        st.pyplot(fig)
 
-        # Vasili Fix it
-        # fig, ax = plt.subplots(figsize=(15, 10))
-        # sns.barplot(x="DayOfWeek", y="Sales", data=train)
-        #
-        # cat_cols = train_store.select_dtypes(include=['object']).columns
-        #
-        # for i in cat_cols:
-        #     st.write(i)
-        #     st.write(train_store[i].value_counts())
-        #     st.write('-' * 20)
-        #
-        # st.pyplot(fig)
-        #
-        # train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
-        # train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
-        # train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
-        # train_store['StoreType'] = train_store['StoreType'].astype(int)
-        # train_store['Assortment'] = train_store['Assortment'].map({'a': 1, 'b': 2, 'c': 3})
-        # train_store['Assortment'] = train_store['Assortment'].astype(int)
-        # train_store['PromoInterval'] = train_store['PromoInterval'].map({'Jan,Apr,Jul,Oct': 1, 'Feb,May,Aug,Nov': 2, 'Mar,Jun,Sept,Dec': 3})
-        # train_store['PromoInterval'] = train_store['PromoInterval'].astype(int)
-        #
-        # train_store.dtypes
+        cat_cols = train_store.select_dtypes(include=['object']).columns
+        for i in cat_cols:
+            st.write(i)
+            st.write(train_store[i].value_counts())
+            st.write('-' * 20)
+
+        # # Data Manipulation
+        st.write("""##### Data Manipulation""")
+        st.code("""train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
+train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
+train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
+train_store['StoreType'] = train_store['StoreType'].astype(int)
+train_store['Assortment'] = train_store['Assortment'].map({'a': 1, 'b': 2, 'c': 3})
+train_store['Assortment'] = train_store['Assortment'].astype(int)
+train_store['PromoInterval'] = train_store['PromoInterval'].map({'Jan,Apr,Jul,Oct': 1, 'Feb,May,Aug,Nov': 2, 'Mar,Jun,Sept,Dec': 3})
+train_store['PromoInterval'] = train_store['PromoInterval'].astype(int)""")
+        train_store['StateHoliday'] = train_store['StateHoliday'].map({'0': 0, 0: 0, 'a': 1, 'b': 2, 'c': 3})
+        type_StateHoliday = train_store['StateHoliday'] = train_store['StateHoliday'].astype('int', errors='ignore')
+        train_store['StoreType'] = train_store['StoreType'].map({'a': 1, 'b': 2, 'c': 3, 'd': 4})
+        type_StoreType = train_store['StoreType'] = train_store['StoreType'].astype(int)
+        train_store['Assortment'] = train_store['Assortment'].map({'a': 1, 'b': 2, 'c': 3})
+        type_Assortment = train_store['Assortment'] = train_store['Assortment'].astype(int)
+        train_store['PromoInterval'] = train_store['PromoInterval'].map({'Jan,Apr,Jul,Oct': 1, 'Feb,May,Aug,Nov': 2, 'Mar,Jun,Sept,Dec': 3})
+        type_PromoInterval = train_store['PromoInterval'] = train_store['PromoInterval'].astype(int)
+
+        st.caption("Type of train_store['StateHoliday']")
+        st.write(type_StateHoliday.dtypes)
+        st.write("")
+        st.caption("Type of train_store['StoreType']")
+        st.write(type_StoreType.dtypes)
+        st.write("")
+        st.caption("Type of train_store['Assortment']")
+        st.write(type_Assortment.dtypes)
+        st.write("")
+        st.caption("Type of train_store['PromoInterval']")
+        st.write(type_PromoInterval.dtypes)
 
     elif choice == "Models":
         st.write("""# Models""")
