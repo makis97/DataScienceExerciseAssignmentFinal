@@ -21,49 +21,50 @@ def main():
     if choice == "Introduction":
         x = 2
         st.write("""# Data Science Assignment""")
+        st.info("Students names: Vasilis Andreou, Prodromos Pieri, Polyxeni Xerou")
         st.write("""# Introduction""")
         st.subheader("""Problem""")
         st.write(""" Using the available data (historical sales data) to follow the necessary steps and develop a model where he can predict the sales that can be made in the future (in the relevant test dataset).""")
-        st.subheader("Files")
-        st.write("""
-        train.csv - historical data including Sales
-        
-        test.csv - historical data excluding Sales
-        
-        store.csv - supplemental information about the stores""")
-        st.subheader("Data fields")
-        st.write("""
-                Id - an Id that represents a (Store, Date) duple within the test set
-                
-                Store - a unique Id for each store
-                
-                Sales - the turnover for any given day (this is what you are predicting)
-                
-                Customers - the number of customers on a given day
-                
-                Open - an indicator for whether the store was open: 0 = closed, 1 = open
-                
-                StateHoliday - indicates a state holiday. Normally all stores, with few exceptions, are closed on state holidays. Note that all schools are closed on public holidays and weekends. a = public holiday, b = Easter holiday, c = Christmas, 0 = None
-                
-                SchoolHoliday - indicates if the (Store, Date) was affected by the closure of public schools
-                
-                StoreType - differentiates between 4 different store models: a, b, c, d
-                
-                Assortment - describes an assortment level: a = basic, b = extra, c = extended
-                
-                CompetitionDistance - distance in meters to the nearest competitor store
-                
-                CompetitionOpenSince[Month/Year] - gives the approximate year and month of the time the nearest competitor was opened
-                
-                Promo - indicates whether a store is running a promo on that day
-                
-                Promo2 - Promo2 is a continuing and consecutive promotion for some stores: 0 = store is not participating, 1 = store is participating
-                
-                Promo2Since[Year/Week] - describes the year and calendar week when the store started participating in Promo2
-                
-                PromoInterval - describes the consecutive intervals Promo2 is started, naming the months the promotion is started anew. E.g. "Feb,May,Aug,Nov" means each round starts in February, May, August, November of any given year for that stor
-    """)
+        with st.expander("Files"):
+            st.write("""
+            train.csv - historical data including Sales
+            
+            test.csv - historical data excluding Sales
+            
+            store.csv - supplemental information about the stores""")
 
+        with st.expander("Data fields"):
+            st.write("""
+                    Id - an Id that represents a (Store, Date) duple within the test set
+                    
+                    Store - a unique Id for each store
+                    
+                    Sales - the turnover for any given day (this is what you are predicting)
+                    
+                    Customers - the number of customers on a given day
+                    
+                    Open - an indicator for whether the store was open: 0 = closed, 1 = open
+                    
+                    StateHoliday - indicates a state holiday. Normally all stores, with few exceptions, are closed on state holidays. Note that all schools are closed on public holidays and weekends. a = public holiday, b = Easter holiday, c = Christmas, 0 = None
+                    
+                    SchoolHoliday - indicates if the (Store, Date) was affected by the closure of public schools
+                    
+                    StoreType - differentiates between 4 different store models: a, b, c, d
+                    
+                    Assortment - describes an assortment level: a = basic, b = extra, c = extended
+                    
+                    CompetitionDistance - distance in meters to the nearest competitor store
+                    
+                    CompetitionOpenSince[Month/Year] - gives the approximate year and month of the time the nearest competitor was opened
+                    
+                    Promo - indicates whether a store is running a promo on that day
+                    
+                    Promo2 - Promo2 is a continuing and consecutive promotion for some stores: 0 = store is not participating, 1 = store is participating
+                    
+                    Promo2Since[Year/Week] - describes the year and calendar week when the store started participating in Promo2
+                    
+                    PromoInterval - describes the consecutive intervals Promo2 is started, naming the months the promotion is started anew. E.g. "Feb,May,Aug,Nov" means each round starts in February, May, August, November of any given year for that stor
+        """)
     elif choice == "Data Exploration":
         st.write("""# Data Exploration""")
         st.write("##### Imports ")
@@ -230,10 +231,75 @@ st.pyplot(fig))""")
             st.write(train_store[i].value_counts())
             st.write('-' * 20)
 
-        # Plot CompetitionDistance Vs Sales
-        competitors = train_store.plot(kind='scatter', x='CompetitionDistance', y='Sales', figsize=(15, 4))
-        st.pyplot(competitors)
+        # Plot average sales & customers with/without promo
+        st.write("""##### Plot average sales and customers with and without promo.""")
+        st.code("""fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
+sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
+st.pyplot(fig)""")
+        fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
+        sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
+        st.pyplot(fig)
 
+        # Plot CompetitionDistance Vs Sales
+        st.write("""##### Plot CompetitionDistance Vs Sales""")
+        st.code("""gr_competitors, ax = plt.subplots()
+sns.scatterplot(data=train_store, x ='CompetitionDistance',y='Sales')
+st.pyplot(gr_competitors)""")
+        gr_competitors, ax = plt.subplots()
+        sns.scatterplot(data=train_store, x ='CompetitionDistance',y='Sales')
+        st.pyplot(gr_competitors)
+
+        # Barplots for average sales and customers with or without promo
+        st.write("""##### Plots for average sales and customers with or without promo""")
+        st.code("""gr_holidays, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='StateHoliday', y='Sales', data=train_store, ax=axis1)
+sns.barplot(x='StateHoliday', y='Customers', data=train_store, ax=axis2)
+st.pyplot(gr_holidays)""")
+        gr_holidays, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='StateHoliday', y='Sales', data=train_store, ax=axis1)
+        sns.barplot(x='StateHoliday', y='Customers', data=train_store, ax=axis2)
+        st.pyplot(gr_holidays)
+
+        # Barplot for average sales and customers on school holidays
+        st.write("""##### Plot for average sales and customersschool holidays""")
+        st.code("""sns.countplot(x='SchoolHoliday', data=train_store)
+gr_schoolHoliday, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='SchoolHoliday', y='Sales', data=train_store, ax=axis1)
+sns.barplot(x='SchoolHoliday', y='Customers', data=train_store, ax=axis2)
+st.pyplot(gr_schoolHoliday)""")
+        sns.countplot(x='SchoolHoliday', data=train_store)
+        gr_schoolHoliday, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='SchoolHoliday', y='Sales', data=train_store, ax=axis1)
+        sns.barplot(x='SchoolHoliday', y='Customers', data=train_store, ax=axis2)
+        st.pyplot(gr_schoolHoliday)
+
+        # Plots for Assortment and & Assortment Vs average sales and customers
+        st.write("""##### Plots for Assortment and & Assortment Vs average sales and customers""")
+        st.code("""sns.countplot(x='Assortment', data=train_store, order=['a', 'b', 'c'])
+gr_assortment, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='Assortment', y='Sales', data=train_store, order=['a', 'b', 'c'], ax=axis1)
+sns.barplot(x='Assortment', y='Customers', data=train_store, order=['a', 'b', 'c'], ax=axis2)
+st.pyplot(gr_assortment)""")
+        sns.countplot(x='Assortment', data=train_store, order=['a', 'b', 'c'])
+        gr_assortment, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='Assortment', y='Sales', data=train_store, order=['a', 'b', 'c'], ax=axis1)
+        sns.barplot(x='Assortment', y='Customers', data=train_store, order=['a', 'b', 'c'], ax=axis2)
+        st.pyplot(gr_assortment)
+
+        # Plots for Promo2 Vs average sales and customers
+        st.write("""##### Plots for Promo2 Vs average sales and customers""")
+        st.code("""sns.countplot(x='Promo2', data=train_store)
+plots_promo2, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='Promo2', y='Sales', data=train_store, ax=axis1)
+sns.barplot(x='Promo2', y='Customers', data=train_store, ax=axis2)
+st.pyplot(plots_promo2)""")
+        sns.countplot(x='Promo2', data=train_store)
+        plots_promo2, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='Promo2', y='Sales', data=train_store, ax=axis1)
+        sns.barplot(x='Promo2', y='Customers', data=train_store, ax=axis2)
+        st.pyplot(plots_promo2)
 
         # # Data Manipulation
         st.write("""##### Data Manipulation""")
