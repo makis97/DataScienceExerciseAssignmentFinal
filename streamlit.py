@@ -22,7 +22,7 @@ def main():
         x = 2
         st.write("""# Data Science Assignment""")
         st.write("""# Introduction""")
-        st.subheader("# Problem")
+        st.subheader("""Problem""")
         st.write(""" Using the available data (historical sales data) to follow the necessary steps and develop a model where he can predict the sales that can be made in the future (in the relevant test dataset).""")
         st.subheader("Files")
         st.write("""
@@ -77,6 +77,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.ensemble import RandomForestRegressor
+from run_models import predict
 import xgboost as xgb
 import streamlit as st""")
 
@@ -103,15 +104,19 @@ train['Day'] = train['Date'].dt.day""")
         train['Day'] = train['Date'].dt.day
         st.write("Result after splitting Date: ", train.head())
 
-        st.write("##### Calculate the average of Sales Per Customers in Train CSV File. On average customers spend about 9.50$ per day.")
+        st.write("##### Calculate the average of Sales Per Customers in Train CSV File.")
         train['SalesPerCustomers'] = train['Sales'] / train['Customers']
         st.code("train['SalesPerCustomers'].describe()")
         st.write("Average of Sales Per Customers: ", train['SalesPerCustomers'].describe())
+        st.write("##### Observation")
+        st.write("On average customers spend about 9.50$ per day.")
 
-        st.write("""##### Check possibility of negative Sales in Train CSV File. As a result there are not negative Sales.""")
+        st.write("""##### Check possibility of negative Sales in Train CSV File.""")
         st.code("""sales_minus = train[(train["Sales"] < 0)]""")
         sales_minus = train[(train["Sales"] < 0)]
         st.write("Sales Minus: ", sales_minus)
+        st.write("##### Observation")
+        st.write("There are not negative Sales.")
 
         st.write("""##### Closed stores and days which didn't have any sales won't be counted in Train CSV File.""")
         st.code("""train = train[(train["Open"] != 0) & (train['Sales'] != 0)]""")
@@ -218,6 +223,18 @@ st.pyplot(fig))""")
             st.write(i)
             st.write(train_store[i].value_counts())
             st.write('-' * 20)
+
+        # Plot average sales & customers with/without promo
+        st.write("""##### Plot average sales and customers with and without promo.""")
+        st.code("""fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
+sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
+st.pyplot(fig)""")
+        fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
+        sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
+        sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
+        st.pyplot(fig)
+
 
         # # Data Manipulation
         st.write("""##### Data Manipulation""")
