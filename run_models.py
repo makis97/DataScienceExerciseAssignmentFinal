@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeRegressor
+import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
+
 
 import seaborn as sns
 
@@ -119,7 +122,7 @@ def predict(model):
         model_alg = dt
 
 
-    if(model ==2):
+    elif(model==2):
         from sklearn.ensemble import AdaBoostRegressor
         adaboost_tree = AdaBoostRegressor(DecisionTreeRegressor())
         adaboost_tree.fit(X_train, y_train)
@@ -127,11 +130,32 @@ def predict(model):
         y_hat = adaboost_tree.predict(X_val)
 
         model_alg = adaboost_tree
-        # test_pred_inv = adaboost_tree.predict(test_m[X_train.columns])
-        #
-        # test_pred_inv = np.exp(test_pred_inv) - 1
-        #print(test_pred_inv)
 
+    elif(model==3):
+
+        dtrain = xgb.DMatrix(X_train, y_train)
+        dvalidate = xgb.DMatrix(X_val[X_train.columns], y_val)
+
+        params = {
+            'eta': 1,
+            'max_depth': 5,
+            'objecive': 'reg:linear'
+        }
+
+        model_xg = xgb.train(params, dtrain, 5)
+
+        y_pred_xg = model_xg.predict(dvalidate)
+
+        y_pred_xg = np.exp(y_pred_xg) - 1
+
+        xgbr = xgb.XGBRegressor(verbosity=0)
+        print(xgbr)
+        xgbr.fit(X_train, y_train)
+        model_alg =xgbr
+    elif (model == 4):
+        randomForest = RandomForestRegressor(n_estimators=25, n_jobs=-1, verbose=1)
+        randomForest.fit(X_train, y_train)
+        model_alg = randomForest
 
     test_cust = train.groupby(['Store'])[['Customers']].mean().reset_index().astype(int)
     print(test_cust)

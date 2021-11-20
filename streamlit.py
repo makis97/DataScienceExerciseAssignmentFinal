@@ -300,6 +300,46 @@ test_pred_inv = np.exp(test_pred_inv) - 1""")
         if st.button("run AdaBoost regressor"):
             model = 2
             st.write(predict(model))
+        st.write("""XGBoost stands for "Extreme Gradient Boosting" and it is an implementation of gradient boosting trees algorithm. 
+The XGBoost is a popular supervised machine learning model with characteristics like computation speed, parallelization, and performance.""")
+        st.code("""import xgboost as xgb
+dtrain = xgb.DMatrix(X_train,y_train)
+dvalidate = xgb.DMatrix(X_val[X_train.columns],y_val)
+
+params = {
+    'eta' : 1,
+    'max_depth' : 5,
+    'objecive' : 'reg:linear'
+}
+
+model_xg = xgb.train(params, dtrain , 5)
+
+y_pred_xg = model_xg.predict(dvalidate)
+
+y_pred_xg = np.exp(y_pred_xg)-1
+
+xgbr = xgb.XGBRegressor(verbosity=0)
+xgbr.fit(X_train, y_train)
+y_hat4 = xgbr.predict(X_val)
+
+test_pred3 = xgbr.predict(test_m[X_train.columns])
+test_pred_inv3 = np.exp(test_pred3)-1""")
+        if st.button("run XGBRegressor"):
+            model = 3
+            st.write(predict(model))
+
+        st.write("""A Random Forest is an ensemble technique capable of performing both regression and classification tasks with the use of multiple decision trees and a 
+technique called Bootstrap and Aggregation, commonly known as bagging. Random Forest has multiple decision trees as base learning models.""")
+        st.code("""randomForest = RandomForestRegressor(n_estimators=25, n_jobs=-1, verbose=1)
+randomForest.fit(X_train, y_train)
+
+y_hat23 = randomForest.predict(X_val)
+test_pred23 = randomForest.predict(test_m[X_train.columns])
+
+test_pred_inv32 = np.exp(test_pred23)-1""")
+        if st.button("run RandomForestRegressor"):
+            model = 4
+            st.write(predict(model))
 
     elif choice == "Conclusion":
         st.write("""# Conclusion""")
