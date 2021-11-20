@@ -177,6 +177,8 @@ st.pyplot(gr_sales_per_mon)""")
                     kind='bar',
                     row='Promo')
         st.pyplot(gr_sales_per_mon)
+        st.write("##### Observation")
+        st.write("Each store has more sales in duration of promo and the last month of the year stores with promo make more sales.")
 
         st.write("""##### Plot about Customers Per Store for each Month. """)
         st.code("""gr_cust_per_month = sns.catplot(data=train_store, x='Month', y="Customers",
@@ -193,7 +195,8 @@ st.pyplot(gr_cust_per_month)""")
                     kind='bar',
                     row='Promo')
         st.pyplot(gr_cust_per_month)
-
+        st.write("##### Observation")
+        st.write("Each store attracts more customers and makes more sales in duration of promo.")
         # # StoreType pie
         st.write("""##### Pie Chart about Sales Percentages Per Store Type""")
         st.code("""store_types = store['StoreType'].value_counts().sort_values(ascending=False)
@@ -208,7 +211,8 @@ st.pyplot(pie_store_type_sales)""")
         ax.pie(store_types, autopct="%.1f%%", startangle=90, labels = store_types.keys())
         ax.set_title('StoreType pie chart')
         st.pyplot(pie_store_type_sales)
-
+        st.write("##### Observation")
+        st.write("There are 4 types of store and the majority of stores are type 'a'.")
         # # DayOfWeek vs Sales
         st.write("""##### Sales Per Day""")
         st.code("""fig, ax = plt.subplots(figsize=(15, 10))
@@ -217,6 +221,8 @@ st.pyplot(fig))""")
         fig, ax = plt.subplots(figsize=(15, 10))
         sns.barplot(x="DayOfWeek", y="Sales", data=train)
         st.pyplot(fig)
+        st.write("##### Observation")
+        st.write("In Sunday there are less sales than the other days of the week. The majority of stores are closed.")
 
         cat_cols = train_store.select_dtypes(include=['object']).columns
         for i in cat_cols:
@@ -224,16 +230,9 @@ st.pyplot(fig))""")
             st.write(train_store[i].value_counts())
             st.write('-' * 20)
 
-        # Plot average sales & customers with/without promo
-        st.write("""##### Plot average sales and customers with and without promo.""")
-        st.code("""fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
-sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
-sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
-st.pyplot(fig)""")
-        fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
-        sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
-        sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
-        st.pyplot(fig)
+        # Plot CompetitionDistance Vs Sales
+        competitors = train_store.plot(kind='scatter', x='CompetitionDistance', y='Sales', figsize=(15, 4))
+        st.pyplot(competitors)
 
 
         # # Data Manipulation
