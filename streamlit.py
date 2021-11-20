@@ -22,6 +22,8 @@ def main():
         x = 2
         st.write("""# Data Science Assignment""")
         st.write("""# Introduction""")
+        st.subheader("# Problem")
+        st.write(""" Using the available data (historical sales data) to follow the necessary steps and develop a model where he can predict the sales that can be made in the future (in the relevant test dataset).""")
         st.subheader("Files")
         st.write("""
         train.csv - historical data including Sales
