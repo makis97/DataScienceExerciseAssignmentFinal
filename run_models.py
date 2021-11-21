@@ -11,7 +11,6 @@ import streamlit as st
 
 import seaborn as sns
 
-#r2_array = []
 
 def plot_importance(x, model_alg):
     importance_df = pd.DataFrame({

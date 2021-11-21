@@ -16,7 +16,7 @@ from run_models import predict
 
 def main():
 
-    # dilwsi menu
+    # Dimiourgia menu
     menu = ["Introduction", "Data Exploration", "Models", "Conclusion"]
     choice = st.sidebar.selectbox("Menu", menu)
 
@@ -87,15 +87,15 @@ from run_models import predict""")
 
         #Diavasma twn csv Arxeiwn
         train = pd.read_csv("train.csv", low_memory=False)
-        st.write("##### Reading Train CSV File: ", train.head())
+        st.write("##### Reading Train CSV File ", train.head())
         st.code("train = pd.read_csv('train.csv', low_memory=False)")
 
         store = pd.read_csv("store.csv")
-        st.write("##### Reading Store CSV File: ", store.head())
+        st.write("##### Reading Store CSV File ", store.head())
         st.code("store = pd.read_csv('store.csv')")
 
         test = pd.read_csv("test.csv")
-        st.write("##### Reading Test CSV File: ", test.head())
+        st.write("##### Reading Test CSV File ", test.head())
         st.code("test = pd.read_csv('test.csv')")
 
         st.write("##### Reading and Splitting Date into Year, Month, Day Columns in Train CSV File. ")
@@ -436,6 +436,13 @@ y_val = np.exp(y_val) - 1""")
 
     elif choice == "Conclusion":
         st.write("""# Conclusion""")
+        with st.expander("Conclusions"):
+            st.write("""
+The conclusions came out after we ran the 4 algorithms. 
+We noticed that these algorithms allow us to see which variables were most useful and dramatically affected sales forecasts.
+The most important of these was the CompetitionDistance variable, ie the distance that stores had from their competitors.
+The highest quality algorithm with the highest score was AdaBoostRegressor, followed by RandomForestRegressor, DecisionTreeRegressor and XGBoostRegressor.
+It is worth noting that sales forecasts were almost the same as in previous years. Comparatively always per year.""")
 
 
 if __name__ == '__main__':
