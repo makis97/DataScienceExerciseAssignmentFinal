@@ -321,7 +321,8 @@ st.pyplot(plots_promo2)""")
         sns.barplot(x='Promo2', y='Customers', data=train_store, ax=axis2)
         st.pyplot(plots_promo2)
         st.write("##### Observations")
-        st.write("""It's a continuous and sequential promotion for some stores: 0 = the store does not participate, 1 = the store participates.""")
+        st.write("""It's a continuous and sequential promotion for some stores: 0 = the store does not participate, 1 = the store participates.
+Despite the fact that some stores have continuous and consecutive discounts there are not more sales and customers.""")
 
         # # Data Manipulation
         st.write("""##### Data Manipulation""")
