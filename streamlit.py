@@ -21,7 +21,7 @@ def main():
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Introduction":
-        st.write("""# Data Science Assignment""")
+        st.write("""# Data Science Assignment-Sales Prediction""")
         st.info("Students names: Vasilis Andreou, Prodromos Pieri, Polyxeni Xerou")
         st.write("""# Introduction""")
         st.subheader("""Problem""")
@@ -265,6 +265,24 @@ st.pyplot(gr_competitors)""")
         st.write("##### Observations")
         st.write("""Most of the stores have their competition within 5km range, that is too close.
 The closer the competitors are, the more sales there are.""")
+
+        # What happened to the average sales of a store over time when competition started?
+        # Example: the average sales for store_id = 6 has dramatically decreased since the competition started
+
+        # store_id = 1
+        # store_data = train_store[train_store["Store"] == store_id]
+        #
+        # average_store_sales = store_data.groupby('Date')["Sales"].mean()
+
+        # Get year, and month when Competition started
+        # y = store["CompetitionOpenSinceYear"].loc[store["Store"] == store_id].values[0]
+        # m = store["CompetitionOpenSinceMonth"].loc[store["Store"] == store_id].values[0]
+
+        # Plot
+        # ax = average_store_sales.plot(legend=True, figsize=(15, 4), marker='o')
+        # ax.set_xticks(range(len(average_store_sales)))
+        # ax.set_xticklabels(average_store_sales.index.tolist(), rotation=90)
+        # st.pyplot(plt)
 
         # Barplots for average sales and customers with or without promo
         st.write("""##### Plots for average sales and customers on state holidays""")
