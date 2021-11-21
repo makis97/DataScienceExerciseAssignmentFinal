@@ -213,7 +213,7 @@ st.pyplot(pie_store_type_sales)""")
         ax.set_title('StoreType pie chart')
         st.pyplot(pie_store_type_sales)
         st.write("##### Observation")
-        st.write("There are 4 types of store and the majority of stores are type 'a'.")
+        st.write("There are 4 types of stores and the majority of stores are type 'a'.")
         # # DayOfWeek vs Sales
         st.write("""##### Sales Per Day""")
         st.code("""fig, ax = plt.subplots(figsize=(15, 10))
