@@ -362,6 +362,7 @@ y_hat = adaboost_tree.predict(X_val)
 test_pred_inv = adaboost_tree.predict(test_m[X_train.columns])
 
 test_pred_inv = np.exp(test_pred_inv) - 1""")
+
         if st.button("run AdaBoost regressor"):
             model = 2
             st.write(predict(model))

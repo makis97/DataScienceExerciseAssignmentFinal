@@ -4,9 +4,36 @@ import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_squared_error
+
+import streamlit as st
 
 
 import seaborn as sns
+
+#r2_array = []
+
+#EDW EINAI TO DATAFRAME TIS GRAFIKIS
+def plot_importance(x, model_alg):
+    importance_df = pd.DataFrame({
+        'feature': x,
+        'importance': model_alg.feature_importances_
+    }).sort_values('importance', ascending=False)
+    return importance_df
+
+
+def ToWeight(y):
+    w = np.zeros(y.shape, dtype=float)
+    ind = y != 0
+    w[ind] = 1. / (y[ind] ** 2)
+    return w
+
+
+def rmspe(y, yhat):
+    w = ToWeight(y)
+    rmspe = np.sqrt(np.mean(w * (y - yhat) ** 2))
+    return rmspe
+
 
 def predict(model):
     train = pd.read_csv("train.csv", low_memory=False)
@@ -63,7 +90,7 @@ def predict(model):
     y = np.log(train_store['Sales'] + 1)
 
     from sklearn.model_selection import train_test_split
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.30, random_state=1)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.20, random_state=1)
 
     X_train.shape, X_val.shape, y_train.shape, y_val.shape
 
@@ -75,49 +102,15 @@ def predict(model):
 
         y_pred_dt = np.exp(y_pred_dt) - 1
         y_val = np.exp(y_val) - 1
-        from sklearn.metrics import r2_score, mean_squared_error
 
-        print(r2_score(y_val, y_pred_dt))
-        print(np.sqrt(mean_squared_error(y_val, y_pred_dt)))
+        r2 = (r2_score(y_val, y_pred_dt))
+        mse = (np.sqrt(mean_squared_error(y_val, y_pred_dt)))
+        rsmp_1 = rmspe(y_val, y_pred_dt)
+        st.write("Regression score: ", r2_score(y_val, y_pred_dt))
+        st.write("Mean Squared Deviation: ", np.sqrt(mean_squared_error(y_val, y_pred_dt)))
+        st.write("Root Mean Square Prediction Error: ", rmspe(y_val, y_pred_dt))
 
-        def ToWeight(y):
-            w = np.zeros(y.shape, dtype=float)
-            ind = y != 0
-            w[ind] = 1. / (y[ind] ** 2)
-            return w
-
-        def rmspe(y, yhat):
-            w = ToWeight(y)
-            rmspe = np.sqrt(np.mean(w * (y - yhat) ** 2))
-            return rmspe
-
-        rmspe(y_val, y_pred_dt)
-
-        def get_rmspe_score(model, input_values, y_actual):
-            y_predicted = model.predict(input_values)
-            y_actual = np.exp(y_actual) - 1
-            y_predicted = np.exp(y_predicted) - 1
-            score = rmspe(y_actual, y_predicted)
-            return score
-
-        from sklearn.model_selection import RandomizedSearchCV
-
-        params = {
-            'max_depth': list(range(5, 25))
-        }
-
-        base = DecisionTreeRegressor()
-
-        model_tuned = RandomizedSearchCV(base, params, return_train_score=True).fit(X_train, y_train)
-
-        model_cv_results = pd.DataFrame(model_tuned.cv_results_).sort_values(by='mean_test_score', ascending=False)
-        model_cv_results
-
-        import matplotlib.pyplot as plt
-
-        model_cv_results.set_index('param_max_depth')['mean_test_score'].plot(color='g', legend=True)
-        model_cv_results.set_index('param_max_depth')['mean_train_score'].plot(color='r', legend=True)
-        plt.grid(True)
+        #r2_array.append(r2)
 
         model_alg = dt
 
@@ -128,6 +121,16 @@ def predict(model):
         adaboost_tree.fit(X_train, y_train)
 
         y_hat = adaboost_tree.predict(X_val)
+
+        y_hat = np.exp(y_hat) - 1
+        y_val = np.exp(y_val) - 1
+
+        print(r2_score(y_val, y_hat))
+        print(np.sqrt(mean_squared_error(y_val, y_hat)))
+
+        st.write("Regression score: ", r2_score(y_val, y_hat))
+        st.write("Mean Squared Deviation: ", np.sqrt(mean_squared_error(y_val, y_hat)))
+        st.write("Root Mean Square Prediction Error: ", rmspe(y_val, y_hat))
 
         model_alg = adaboost_tree
 
@@ -147,15 +150,47 @@ def predict(model):
         y_pred_xg = model_xg.predict(dvalidate)
 
         y_pred_xg = np.exp(y_pred_xg) - 1
+        y_val = np.exp(y_val) - 1
 
         xgbr = xgb.XGBRegressor(verbosity=0)
         print(xgbr)
         xgbr.fit(X_train, y_train)
+
+        print(r2_score(y_val, y_pred_xg))
+        print(np.sqrt(mean_squared_error(y_val, y_pred_xg)))
+
+        st.write("Regression score: ", r2_score(y_val, y_pred_xg))
+        st.write("Mean Squared Deviation: ", np.sqrt(mean_squared_error(y_val, y_pred_xg)))
+        st.write("Root Mean Square Prediction Error: ", rmspe(y_val, y_pred_xg))
+
         model_alg =xgbr
+
     elif (model == 4):
+
         randomForest = RandomForestRegressor(n_estimators=25, n_jobs=-1, verbose=1)
         randomForest.fit(X_train, y_train)
+
+        y_pred_rfd = randomForest.predict(X_val)
+
+        y_pred_rfd = np.exp(y_pred_rfd) - 1
+        y_val = np.exp(y_val) - 1
+
+        print(r2_score(y_val, y_pred_rfd))
+        print(np.sqrt(mean_squared_error(y_val, y_pred_rfd)))
+
+        st.write("Regression score: ", r2_score(y_val, y_pred_rfd))
+        st.write("Mean Squared Deviation: ", np.sqrt(mean_squared_error(y_val, y_pred_rfd)))
+        st.write("Root Mean Square Prediction Error: ", rmspe(y_val, y_pred_rfd))
+
         model_alg = randomForest
+
+    # importance_df = plot_importance(X_train.columns, model_alg)
+    #
+    # #EDW EINAI I GRAFIKI POU PREPEI NA TYPWNETE
+    # sns.barplot(data=importance_df.head(10), x='importance', y='feature')
+    # plt.title('Feature Importance')
+    # plt.xlabel('Importance')
+    # plt.ylabel('Feature')
 
     test_cust = train.groupby(['Store'])[['Customers']].mean().reset_index().astype(int)
     print(test_cust)
@@ -208,5 +243,39 @@ def predict(model):
     print(submission.head())
     test_m['Sales'] = test_pred_inv
     test_m['Sales'] = test_m['Sales'].astype(int)
+
+    # EDW THA MPOUN OI TELIKES GRAFIKES
+    # sales = train[train.Store == 1].loc[:, ['Date', 'Sales']]
+    #
+    # # reverse to the order: from 2013 to 2015
+    # sales = sales.sort_index(ascending=False)
+    #
+    # # to datetime64
+    # sales['Date'] = pd.DatetimeIndex(sales['Date'])
+    #
+    # ax = sales.set_index('Date').plot(figsize=(12, 4), color='c')
+    # ax.set_ylabel('Daily Number of Sales')
+    # ax.set_xlabel('Date')
+    #
+    # pred_sales = test_m[test_m.Store == 1].loc[:, ['Date', 'Sales']]
+    #
+    # pred_sales = pred_sales.sort_index(ascending=False)
+    #
+    # # to datetime64
+    # pred_sales['Date'] = pd.DatetimeIndex(pred_sales['Date'])
+    #
+    # ax = pred_sales.set_index('Date').plot(figsize=(12, 4), color='c')
+    # ax.set_ylabel('Daily Number of Sales')
+    # ax.set_xlabel('Date')
+    #
+    # ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2014-8-1', '2014-9-30'])
+    # ax2.set_ylabel('Daily Number of Sales')
+    # ax2.set_xlabel('Date')
+    # plt.show()
+    #
+    # ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2013-8-1', '2013-9-30'])
+    # ax2.set_ylabel('Daily Number of Sales')
+    # ax2.set_xlabel('Date')
+    # plt.show()
 
     return test_m
