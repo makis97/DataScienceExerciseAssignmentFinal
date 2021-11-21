@@ -13,7 +13,6 @@ import seaborn as sns
 
 #r2_array = []
 
-#EDW EINAI TO DATAFRAME TIS GRAFIKIS
 def plot_importance(x, model_alg):
     importance_df = pd.DataFrame({
         'feature': x,
@@ -184,13 +183,13 @@ def predict(model):
 
         model_alg = randomForest
 
-    # importance_df = plot_importance(X_train.columns, model_alg)
-    #
-    # #EDW EINAI I GRAFIKI POU PREPEI NA TYPWNETE
-    # sns.barplot(data=importance_df.head(10), x='importance', y='feature')
-    # plt.title('Feature Importance')
-    # plt.xlabel('Importance')
-    # plt.ylabel('Feature')
+    importance_df = plot_importance(X_train.columns, model_alg)
+    fig, ax = plt.subplots(figsize=(15, 10))
+    sns.barplot(data=importance_df.head(10), x='importance', y='feature')
+    plt.title('Feature Importance')
+    plt.xlabel('Importance')
+    plt.ylabel('Feature')
+    st.pyplot(fig)
 
     test_cust = train.groupby(['Store'])[['Customers']].mean().reset_index().astype(int)
     print(test_cust)
@@ -244,38 +243,34 @@ def predict(model):
     test_m['Sales'] = test_pred_inv
     test_m['Sales'] = test_m['Sales'].astype(int)
 
-    # EDW THA MPOUN OI TELIKES GRAFIKES
-    # sales = train[train.Store == 1].loc[:, ['Date', 'Sales']]
-    #
-    # # reverse to the order: from 2013 to 2015
-    # sales = sales.sort_index(ascending=False)
-    #
-    # # to datetime64
-    # sales['Date'] = pd.DatetimeIndex(sales['Date'])
-    #
-    # ax = sales.set_index('Date').plot(figsize=(12, 4), color='c')
-    # ax.set_ylabel('Daily Number of Sales')
-    # ax.set_xlabel('Date')
-    #
-    # pred_sales = test_m[test_m.Store == 1].loc[:, ['Date', 'Sales']]
-    #
-    # pred_sales = pred_sales.sort_index(ascending=False)
-    #
-    # # to datetime64
-    # pred_sales['Date'] = pd.DatetimeIndex(pred_sales['Date'])
-    #
-    # ax = pred_sales.set_index('Date').plot(figsize=(12, 4), color='c')
-    # ax.set_ylabel('Daily Number of Sales')
-    # ax.set_xlabel('Date')
-    #
-    # ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2014-8-1', '2014-9-30'])
-    # ax2.set_ylabel('Daily Number of Sales')
-    # ax2.set_xlabel('Date')
-    # plt.show()
-    #
-    # ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2013-8-1', '2013-9-30'])
-    # ax2.set_ylabel('Daily Number of Sales')
-    # ax2.set_xlabel('Date')
-    # plt.show()
+    sales = train[train.Store == 1].loc[:, ['Date', 'Sales']]
+    # reverse to the order: from 2013 to 2015
+    sales = sales.sort_index(ascending=False)
+    # to datetime64
+    sales['Date'] = pd.DatetimeIndex(sales['Date'])
+    ax = sales.set_index('Date').plot(figsize=(12, 4), color='c')
+    ax.set_ylabel('Daily Number of Sales')
+    ax.set_xlabel('Date')
+    st.pyplot(plt)
+
+    test_m['Date'] = test['Date']
+    pred_sales = test_m[test_m.Store == 1].loc[:, ['Date', 'Sales']]
+    pred_sales = pred_sales.sort_index(ascending=False)
+    # to datetime64
+    pred_sales['Date'] = pd.DatetimeIndex(pred_sales['Date'])
+    ax = pred_sales.set_index('Date').plot(figsize=(12, 4), color='c')
+    ax.set_ylabel('Daily Number of Sales')
+    ax.set_xlabel('Date')
+    st.pyplot(plt)
+
+    ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2014-8-1', '2014-9-30'])
+    ax2.set_ylabel('Daily Number of Sales')
+    ax2.set_xlabel('Date')
+    st.pyplot(plt)
+
+    ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2013-8-1', '2013-9-30'])
+    ax2.set_ylabel('Daily Number of Sales')
+    ax2.set_xlabel('Date')
+    st.pyplot(plt)
 
     return test_m
