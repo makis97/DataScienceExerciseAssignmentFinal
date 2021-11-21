@@ -102,14 +102,9 @@ def predict(model):
         y_pred_dt = np.exp(y_pred_dt) - 1
         y_val = np.exp(y_val) - 1
 
-        r2 = (r2_score(y_val, y_pred_dt))
-        mse = (np.sqrt(mean_squared_error(y_val, y_pred_dt)))
-        rsmp_1 = rmspe(y_val, y_pred_dt)
         st.write("Regression score: ", r2_score(y_val, y_pred_dt))
         st.write("Mean Squared Deviation: ", np.sqrt(mean_squared_error(y_val, y_pred_dt)))
         st.write("Root Mean Square Prediction Error: ", rmspe(y_val, y_pred_dt))
-
-        #r2_array.append(r2)
 
         model_alg = dt
 
@@ -184,6 +179,8 @@ def predict(model):
         model_alg = randomForest
 
     importance_df = plot_importance(X_train.columns, model_alg)
+    st.write("""Plot feature importance for the chosen model,  show top 10 features: """)
+
     fig, ax = plt.subplots(figsize=(15, 10))
     sns.barplot(data=importance_df.head(10), x='importance', y='feature')
     plt.title('Feature Importance')
@@ -211,13 +208,6 @@ def predict(model):
 
     test_m.drop('Date', 1, inplace=True)
 
-    cat_cols = test_m.select_dtypes(include=['object']).columns
-
-    for i in cat_cols:
-        print(i)
-        print(test_m[i].value_counts())
-        print('-' * 20)
-
     test_m['StateHoliday'] = test_m['StateHoliday'].map({'0': 0, 'a': 1})
     test_m['StateHoliday'] = test_m['StateHoliday'].astype(int)
 
@@ -235,19 +225,15 @@ def predict(model):
     test_pred_inv = np.exp(test_pred) - 1
     print(test_pred_inv)
 
-    submission = pd.DataFrame({'Id': test_m['Id'], 'Sales': test_pred_inv})
-    submission['Sales'] = submission['Sales'].astype(int)
-    submission['Id'] = submission.index
-    submission['Id'] = submission['Id'] + 1
-    print(submission.head())
     test_m['Sales'] = test_pred_inv
     test_m['Sales'] = test_m['Sales'].astype(int)
 
     sales = train[train.Store == 1].loc[:, ['Date', 'Sales']]
-    # reverse to the order: from 2013 to 2015
     sales = sales.sort_index(ascending=False)
-    # to datetime64
     sales['Date'] = pd.DatetimeIndex(sales['Date'])
+
+    st.write("""Plot for store 1 for 01/2013 - 09/2015: """)
+
     ax = sales.set_index('Date').plot(figsize=(12, 4), color='c')
     ax.set_ylabel('Daily Number of Sales')
     ax.set_xlabel('Date')
@@ -256,18 +242,21 @@ def predict(model):
     test_m['Date'] = test['Date']
     pred_sales = test_m[test_m.Store == 1].loc[:, ['Date', 'Sales']]
     pred_sales = pred_sales.sort_index(ascending=False)
-    # to datetime64
+    st.write("""The prediction Plot for store 1 for August 2015: """)
+
     pred_sales['Date'] = pd.DatetimeIndex(pred_sales['Date'])
     ax = pred_sales.set_index('Date').plot(figsize=(12, 4), color='c')
     ax.set_ylabel('Daily Number of Sales')
     ax.set_xlabel('Date')
     st.pyplot(plt)
 
+    st.write("""Plot for store 1 for August 2014: """)
     ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2014-8-1', '2014-9-30'])
     ax2.set_ylabel('Daily Number of Sales')
     ax2.set_xlabel('Date')
     st.pyplot(plt)
 
+    st.write("""Plot for store 1 for August 2013: """)
     ax2 = sales.set_index('Date').plot(figsize=(12, 4), color='c', xlim=['2013-8-1', '2013-9-30'])
     ax2.set_ylabel('Daily Number of Sales')
     ax2.set_xlabel('Date')

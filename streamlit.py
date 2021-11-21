@@ -363,12 +363,13 @@ train_store['PromoInterval'] = train_store['PromoInterval'].astype(int)""")
 
     elif choice == "Models":
         st.write("""# Models""")
+        st.write("Define training and testing sets")
         st.code("""X = train_store.drop(['Sales','Date','Customers','SalesPerCustomers'],1)
 y = np.log(train_store['Sales']+1)
 from sklearn.model_selection import train_test_split
 X_train , X_val , y_train , y_val = train_test_split(X , y , test_size=0.20 , random_state = 1 )""")
 
-        st.write("""# Choose Algorithm""")
+        st.write("""# Choose Model""")
         st.write("""Decision Tree Regressor
         Decision tree is one of the well known and powerful supervised machine learning algorithms that can be used for classification and regression problems. Scikit-learn API provides the DecisionTreeRegressor class to apply decision tree method for regression task.""")
         st.code("""dt = DecisionTreeRegressor(max_depth=11)
@@ -384,13 +385,13 @@ y_val = np.exp(y_val)-1""")
             st.write(predict(model))
         st.write("""An AdaBoost regressor. An AdaBoost regressor is a meta-estimator that begins by fitting a regressor on the original dataset and then fits additional 
         copies of the regressor on the same dataset but where the weights of instances are adjusted according to the error of the current prediction.""")
-        st.code("""daboost_tree = AdaBoostRegressor(DecisionTreeRegressor())
+        st.code("""adaboost_tree = AdaBoostRegressor(DecisionTreeRegressor())
 adaboost_tree.fit(X_train, y_train)
+
 y_hat = adaboost_tree.predict(X_val)
 
-test_pred_inv = adaboost_tree.predict(test_m[X_train.columns])
-
-test_pred_inv = np.exp(test_pred_inv) - 1""")
+y_hat = np.exp(y_hat) - 1
+y_val = np.exp(y_val) - 1""")
 
         if st.button("run AdaBoost regressor"):
             model = 2
@@ -398,27 +399,24 @@ test_pred_inv = np.exp(test_pred_inv) - 1""")
         st.write("""XGBoost stands for "Extreme Gradient Boosting" and it is an implementation of gradient boosting trees algorithm. 
 The XGBoost is a popular supervised machine learning model with characteristics like computation speed, parallelization, and performance.""")
         st.code("""import xgboost as xgb
-dtrain = xgb.DMatrix(X_train,y_train)
-dvalidate = xgb.DMatrix(X_val[X_train.columns],y_val)
+dtrain = xgb.DMatrix(X_train, y_train)
+dvalidate = xgb.DMatrix(X_val[X_train.columns], y_val)
 
 params = {
-    'eta' : 1,
-    'max_depth' : 5,
-    'objecive' : 'reg:linear'
+    'eta': 1,
+    'max_depth': 5,
+    'objecive': 'reg:linear'
 }
 
-model_xg = xgb.train(params, dtrain , 5)
+model_xg = xgb.train(params, dtrain, 5)
 
 y_pred_xg = model_xg.predict(dvalidate)
 
-y_pred_xg = np.exp(y_pred_xg)-1
+y_pred_xg = np.exp(y_pred_xg) - 1
+y_val = np.exp(y_val) - 1
 
 xgbr = xgb.XGBRegressor(verbosity=0)
-xgbr.fit(X_train, y_train)
-y_hat4 = xgbr.predict(X_val)
-
-test_pred3 = xgbr.predict(test_m[X_train.columns])
-test_pred_inv3 = np.exp(test_pred3)-1""")
+xgbr.fit(X_train, y_train)""")
         if st.button("run XGBRegressor"):
             model = 3
             st.write(predict(model))
@@ -428,10 +426,10 @@ technique called Bootstrap and Aggregation, commonly known as bagging. Random Fo
         st.code("""randomForest = RandomForestRegressor(n_estimators=25, n_jobs=-1, verbose=1)
 randomForest.fit(X_train, y_train)
 
-y_hat23 = randomForest.predict(X_val)
-test_pred23 = randomForest.predict(test_m[X_train.columns])
+y_pred_rfd = randomForest.predict(X_val)
 
-test_pred_inv32 = np.exp(test_pred23)-1""")
+y_pred_rfd = np.exp(y_pred_rfd) - 1
+y_val = np.exp(y_val) - 1""")
         if st.button("run RandomForestRegressor"):
             model = 4
             st.write(predict(model))
