@@ -178,7 +178,7 @@ st.pyplot(gr_sales_per_mon)""")
                     kind='bar',
                     row='Promo')
         st.pyplot(gr_sales_per_mon)
-        st.write("##### Observation")
+        st.write("##### Observations")
         st.write("Each store has more sales in duration of promo and the last month of the year stores with promo make more sales.")
 
         st.write("""##### Plot about Customers Per Store for each Month. """)
@@ -196,7 +196,7 @@ st.pyplot(gr_cust_per_month)""")
                     kind='bar',
                     row='Promo')
         st.pyplot(gr_cust_per_month)
-        st.write("##### Observation")
+        st.write("##### Observations")
         st.write("Each store attracts more customers and makes more sales in duration of promo.")
         # # StoreType pie
         st.write("""##### Pie Chart about Sales Percentages Per Store Type""")
@@ -212,8 +212,10 @@ st.pyplot(pie_store_type_sales)""")
         ax.pie(store_types, autopct="%.1f%%", startangle=90, labels = store_types.keys())
         ax.set_title('StoreType pie chart')
         st.pyplot(pie_store_type_sales)
-        st.write("##### Observation")
-        st.write("There are 4 types of stores and the majority of stores are type 'a'.")
+        st.write("##### Observations")
+        st.write("""There are 4 type of stores(a,b,c,d).
+Stores of type a has higher amount of total Customers and Sales.
+StoreType d goes on the second place in both Sales and Customers.""")
         # # DayOfWeek vs Sales
         st.write("""##### Sales Per Day""")
         st.code("""fig, ax = plt.subplots(figsize=(15, 10))
@@ -222,8 +224,10 @@ st.pyplot(fig))""")
         fig, ax = plt.subplots(figsize=(15, 10))
         sns.barplot(x="DayOfWeek", y="Sales", data=train)
         st.pyplot(fig)
-        st.write("##### Observation")
-        st.write("In Sunday there are less sales than the other days of the week. The majority of stores are closed.")
+        st.write("##### Observations")
+        st.write("""Sales and Customers are both very less on Sundays as most of the stores are closed on Sunday.
+So, Sales on Monday is highest in whole week. 
+This might be due to the fact that stores are closed on Sundays.""")
 
         cat_cols = train_store.select_dtypes(include=['object']).columns
         for i in cat_cols:
@@ -241,6 +245,9 @@ st.pyplot(fig)""")
         sns.barplot(x='Promo', y='Sales', data=train_store, ax=axis1)
         sns.barplot(x='Promo', y='Customers', data=train_store, ax=axis2)
         st.pyplot(fig)
+        st.write("##### Observations")
+        st.write("""Both Sales and Customers increases by a significant amount during Promotions.
+This shows that Promotion has a positive effect for a store.""")
 
         # Plot CompetitionDistance Vs Sales
         st.write("""##### Plot CompetitionDistance Vs Sales""")
@@ -250,9 +257,12 @@ st.pyplot(gr_competitors)""")
         gr_competitors, ax = plt.subplots()
         sns.scatterplot(data=train_store, x ='CompetitionDistance',y='Sales')
         st.pyplot(gr_competitors)
+        st.write("##### Observations")
+        st.write("""Most of the stores have their competition within 5km range, that is too close.
+The closer the competitors are, the more sales there are.""")
 
         # Barplots for average sales and customers with or without promo
-        st.write("""##### Plots for average sales and customers with or without promo""")
+        st.write("""##### Plots for average sales and customers on state holidays""")
         st.code("""gr_holidays, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
 sns.barplot(x='StateHoliday', y='Sales', data=train_store, ax=axis1)
 sns.barplot(x='StateHoliday', y='Customers', data=train_store, ax=axis2)
@@ -261,9 +271,13 @@ st.pyplot(gr_holidays)""")
         sns.barplot(x='StateHoliday', y='Sales', data=train_store, ax=axis1)
         sns.barplot(x='StateHoliday', y='Customers', data=train_store, ax=axis2)
         st.pyplot(gr_holidays)
+        st.write("##### Observations")
+        st.write("""Most of the stores remain closed during State and School Holidays.
+But it is interesting to note that the number of stores opened during School Holidays were more than that were opened during State Holidays.
+Another important thing to note is that the stores which were opened during School holidays had more sales than normal.""")
 
         # Barplot for average sales and customers on school holidays
-        st.write("""##### Plot for average sales and customersschool holidays""")
+        st.write("""##### Plot for average sales and customers on school holidays""")
         st.code("""sns.countplot(x='SchoolHoliday', data=train_store)
 gr_schoolHoliday, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 4))
 sns.barplot(x='SchoolHoliday', y='Sales', data=train_store, ax=axis1)
@@ -274,6 +288,10 @@ st.pyplot(gr_schoolHoliday)""")
         sns.barplot(x='SchoolHoliday', y='Sales', data=train_store, ax=axis1)
         sns.barplot(x='SchoolHoliday', y='Customers', data=train_store, ax=axis2)
         st.pyplot(gr_schoolHoliday)
+        st.write("##### Observations")
+        st.write("""Most of the stores remain closed during State and School Holidays.
+But it is interesting to note that the number of stores opened during School Holidays were more than that were opened during State Holidays.
+Another important thing to note is that the stores which were opened during School holidays had more sales than normal.""")
 
         # Plots for Assortment and & Assortment Vs average sales and customers
         st.write("""##### Plots for Assortment and & Assortment Vs average sales and customers""")
@@ -287,7 +305,9 @@ st.pyplot(gr_assortment)""")
         sns.barplot(x='Assortment', y='Sales', data=train_store, order=['a', 'b', 'c'], ax=axis1)
         sns.barplot(x='Assortment', y='Customers', data=train_store, order=['a', 'b', 'c'], ax=axis2)
         st.pyplot(gr_assortment)
-
+        st.write("##### Observations")
+        st.write("""There are 3 types of assortments(a,b,c).
+Assortment b has higher sales and customers than the other assortments.""")
         # Plots for Promo2 Vs average sales and customers
         st.write("""##### Plots for Promo2 Vs average sales and customers""")
         st.code("""sns.countplot(x='Promo2', data=train_store)
@@ -300,6 +320,8 @@ st.pyplot(plots_promo2)""")
         sns.barplot(x='Promo2', y='Sales', data=train_store, ax=axis1)
         sns.barplot(x='Promo2', y='Customers', data=train_store, ax=axis2)
         st.pyplot(plots_promo2)
+        st.write("##### Observations")
+        st.write("""It's a continuous and sequential promotion for some stores: 0 = the store does not participate, 1 = the store participates.""")
 
         # # Data Manipulation
         st.write("""##### Data Manipulation""")
