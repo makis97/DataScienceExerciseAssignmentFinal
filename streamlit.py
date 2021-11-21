@@ -21,7 +21,8 @@ def main():
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Introduction":
-        st.write("""# Data Science Assignment-Sales Prediction""")
+        st.write("""# Data Science Assignment
+# Sales Prediction""")
         st.info("Students names: Vasilis Andreou, Prodromos Pieri, Polyxeni Xerou")
         st.write("""# Introduction""")
         st.subheader("""Problem""")
