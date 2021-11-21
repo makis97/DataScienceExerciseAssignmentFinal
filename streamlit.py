@@ -13,13 +13,14 @@ from sklearn.ensemble import RandomForestRegressor
 import streamlit as st
 from run_models import predict
 
+
 def main():
 
+    # dilwsi menu
     menu = ["Introduction", "Data Exploration", "Models", "Conclusion"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Introduction":
-        x = 2
         st.write("""# Data Science Assignment""")
         st.info("Students names: Vasilis Andreou, Prodromos Pieri, Polyxeni Xerou")
         st.write("""# Introduction""")
@@ -80,8 +81,10 @@ from sklearn.ensemble import AdaBoostRegressor
 from sklearn.ensemble import RandomForestRegressor
 from run_models import predict
 import xgboost as xgb
-import streamlit as st""")
+import streamlit as st
+from run_models import predict""")
 
+        #Diavasma twn csv Arxeiwn
         train = pd.read_csv("train.csv", low_memory=False)
         st.write("##### Reading Train CSV File: ", train.head())
         st.code("train = pd.read_csv('train.csv', low_memory=False)")
@@ -99,14 +102,16 @@ import streamlit as st""")
 train['Year'] = train['Date'].dt.year
 train['Month'] = train['Date'].dt.month
 train['Day'] = train['Date'].dt.day""")
+        ## Allagi tou datatype
         train['Date'] = pd.to_datetime(train['Date'])
+        # data extraction
         train['Year'] = train['Date'].dt.year
         train['Month'] = train['Date'].dt.month
         train['Day'] = train['Date'].dt.day
         st.write("Result after splitting Date: ", train.head())
 
         st.write("##### Calculate the average of Sales Per Customers in Train CSV File.")
-        train['SalesPerCustomers'] = train['Sales'] / train['Customers']
+        train['SalesPerCustomers'] = train['Sales'] / train['Customers']  # prosthiki neas metavlitis
         st.code("train['SalesPerCustomers'].describe()")
         st.write("Average of Sales Per Customers: ", train['SalesPerCustomers'].describe())
         st.write("##### Observation")
